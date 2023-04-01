@@ -1,6 +1,6 @@
 from scraper import PlayersScraper
 
-# output_file = "dataset.csv"
+# output_file = "dataset.dataset"
 
 scraper = PlayersScraper()
 data = scraper.scrape()

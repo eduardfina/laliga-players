@@ -3,10 +3,8 @@ from urllib.request import urlopen
 import re
 import time
 from bs4 import BeautifulSoup
-# from dateutil import parser
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
 
 
 class PlayersScraper():
@@ -179,12 +177,12 @@ class PlayersScraper():
         return players_info
 
     def data2csv(self, data):
-        with open("output.csv", "w", newline="") as csvfile:
+        with open("../dataset/dataset.csv", "w", newline="") as csvfile:
             print("Creating CSV...")
             writer = csv.writer(csvfile)
 
             # Header
-            header = ["playerName", "height", "weight", "birthDate", "country", "goals", "shots", "penalties",
+            header = ["playerName", "height", "weight", "birthDate", "country", "url", "goals", "shots", "penalties",
                       "foulsReceived", "offSides", "foulsCommited", "recoveries", "passesCutOff", "entrancesWon",
                       "duels", "cards", "passes", "goalAssists", "dribbles", "corners", "ballLosses"]
             writer.writerow(header)
@@ -219,16 +217,6 @@ class PlayersScraper():
         for squad in squad_links:
             player_links.extend(self.__get_player_links(squad))
 
-        """player_links = [  # TEST
-            "https://www.marca.com/resultados/futbol/jugadores/ad/ce/robert-lewandowski/ficha/P56764.html",
-            "https://www.marca.com/resultados/futbol/jugadores/e6/18/raphinha/ficha/P219961.html",
-            "https://www.marca.com/resultados/futbol/jugadores/69/4d/arnau-martinez/ficha/P517333.html",
-            "https://www.marca.com/resultados/futbol/jugadores/e6/18/raphinha/ficha/P219961.html",
-            "https://www.marca.com/resultados/futbol/jugadores/4e/7a/ousmane-dembele/ficha/P219438.html",
-            "https://www.marca.com/resultados/futbol/jugadores/67/72/rodrigo-riquelme/ficha/P437834.html"
-        ]
-        """
-
         players_info = {}
         print("Scraping each player information...")
 
@@ -246,7 +234,7 @@ class PlayersScraper():
 
         end_time = time.time()
         scraping_time = end_time - start_time
-        print("Done in " + str(scraping_time) + "s.")
+        print("Done in " + str(scraping_time) + "seconds.")
 
         # print(players_info)
         return players_info
