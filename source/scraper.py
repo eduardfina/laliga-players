@@ -1,10 +1,10 @@
 import csv
 from urllib.request import urlopen
 import re
-import time
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+import time
 
 
 class PlayersScraper():
@@ -35,11 +35,13 @@ class PlayersScraper():
         return links
 
     def __download_html(self, url):
+        # Download and return the html code from the url page
         response = urlopen(url)
         html = response.read()
         return html
 
     def __get_squad_link(self, url):
+        # Get the squad links from the team page
         html = self.__download_html(url)
         soup = BeautifulSoup(html, 'html.parser')
         squad = soup.find(lambda tag: tag.name == "a" and "Plantilla" in tag.text)
@@ -48,6 +50,7 @@ class PlayersScraper():
         return link
 
     def __get_player_links(self, url):
+        # Get the player links from the squad page
         html = self.__download_html(url)
         soup = BeautifulSoup(html, 'html.parser')
 
@@ -57,6 +60,7 @@ class PlayersScraper():
         return player_links
 
     def __get_player_stats_link(self, url):
+        # Get the player stats link from the player page
         html = self.__download_html(url)
         soup = BeautifulSoup(html, 'html.parser')
         squad = soup.find(lambda tag: tag.name == "a" and "Estadísticas" in tag.text)
@@ -236,5 +240,4 @@ class PlayersScraper():
         scraping_time = end_time - start_time
         print("Done in " + str(scraping_time) + "seconds.")
 
-        # print(players_info)
         return players_info
