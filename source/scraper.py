@@ -72,25 +72,28 @@ class PlayersScraper():
         return link
 
     def __get_player_basic_info(self, url):
+        # We obtain for each player the name, weight, height, birthDate and country (if possible)
         player_info = {}
         html = self.__download_html(url)
         soup = BeautifulSoup(html, 'html.parser')
 
         info = [tag.text for tag in soup.findAll('ul', class_="ue-c-sports-card__list")]
 
+        # Regex is used to obtain the name
         player_info["playerName"] = re.search("\n\n(.*,)", info[0])[1]
 
+        # We try to obtain the weight and height also by using regex
         try:
             height_and_weight = re.search("1.*kg", info[0])[0]
             if height_and_weight is not None:
                 player_info["height"] = height_and_weight.split(",")[0]
                 player_info["weight"] = height_and_weight.split(",")[1].replace(" ", "", 1)
-        except:
+        except:  # if not possible, then nothing is saved in the field
             player_info["height"] = ""
             player_info["weight"] = ""
 
+        # We also try to obtain the birthdate and the country
         try:
-
             birth_and_country = re.search("[0-9]{1,2}.*[0-9]{4}.*", info[0])[0]
             if re.match("en", birth_and_country):
                 player_info["birthDate"] = birth_and_country.split(" en ")[0]
@@ -98,7 +101,6 @@ class PlayersScraper():
             else:
                 player_info["birthDate"] = birth_and_country.split(",")[0]
                 player_info["country"] = birth_and_country.split(",")[1].replace(" ", "").replace(".", "")
-
         except:
             player_info["birthDate"] = ""
             player_info["country"] = ""
@@ -106,6 +108,7 @@ class PlayersScraper():
         return player_info
 
     def __get_stats(self, url, players_info, player_name):
+        # The maximum possible number of stats for each player is obtained by using regex
 
         attributes = ["goals", "shots", "penalties", "foulsReceived", "offSides", "foulsCommited", "recoveries",
                       "passesCutOff", "entrancesWon", "duels", "cards", "passes", "goalAssists", "dribbles",
@@ -181,6 +184,7 @@ class PlayersScraper():
         return players_info
 
     def data2csv(self, data):
+        # The data is saved in a csv file
         with open("../dataset/dataset.csv", "w", newline="") as csvfile:
             print("Creating CSV...")
             writer = csv.writer(csvfile)
@@ -198,6 +202,7 @@ class PlayersScraper():
             print("Done.")
 
     def scrape(self):
+        # Main function
         print('Web Scraping of football players data from https://www.marca.com/')
 
         # Start timer
@@ -205,12 +210,14 @@ class PlayersScraper():
 
         print('Getting all team links...')
 
+        # Obtain the links of all the participating teams
         team_links = []
         for url in self.urls:
             team_links.extend(self.__get_team_links(url))
 
         print('Getting all squad links...')
 
+        # Obtain the link of all the players
         squad_links = []
         for team in team_links:
             squad_links.append(self.__get_squad_link(team))
@@ -221,6 +228,7 @@ class PlayersScraper():
         for squad in squad_links:
             player_links.extend(self.__get_player_links(squad))
 
+        # Dictionary of dictionaries where all the players info will be saved
         players_info = {}
         print("Scraping each player information...")
 
